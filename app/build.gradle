@@ -1,0 +1,43 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 23
+    buildToolsVersion "23.0.2"
+
+    defaultConfig {
+        applicationId "com.masonliu.ndk"
+        minSdkVersion 19
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+        //clean project 再rebuild project 生成class文件，
+        //这时候打开如下图的文件夹看是否生成了classes文件夹，没有生成请重新来过。
+        //再打开Terminal输入指令
+        //cd app/build/intermediates/classes/debug
+        //然后再输入指令
+        //javah -jni com.masonliu.ndk.JNIUtil
+        //注意 这里javah -jni后面跟的是JniUtils类的全路径，如果javah报不存在之类的，是你的java环境没有配置好。
+        //这时候打开classes/debug下面的文件发现多了一个文件
+        //com_masonliu_ndk_JNIUtil.h
+        //然后在src/main下新建文件夹jni,把生成的.h文件复制或者剪切到jni文件夹下面去，新建一个c类随便取一个名字
+        ndk{
+            moduleName "NdkJniDemo"			//生成的so名字
+            ldLibs "log", "z", "m"	//添加依赖库文件，因为有log打印等
+            abiFilters "armeabi", "armeabi-v7a", "x86"	//输出指定三种abi体系结构下的so库。目前可有可无。
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+        debug {
+            jniDebuggable true
+        }
+    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile 'com.android.support:appcompat-v7:23.1.1'
+}
